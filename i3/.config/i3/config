@@ -17,7 +17,6 @@ exec --no-startup-id dex --autostart --environment i3
 exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
 exec --no-startup-id nm-applet
 exec --no-startup-id thunar --daemon
-exec --no-startup-id /usr/bin/alternating_layouts.py
 
 # Set a random wallpaper on startup
 exec --no-startup-id feh --bg-fill --randomize /home/yannis/Documents/wallpapers/*
@@ -136,3 +135,8 @@ bar {
         status_command i3blocks -c ~/.config/i3blocks/config
 	position top
 }
+
+# =============================================================================
+# Custom Window Class
+# ============================================================================
+for_window [class="floating-window"] floating enable, resize set 900 600, move position center

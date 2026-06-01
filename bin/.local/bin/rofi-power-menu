@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+# Options to display
+options="󰐥 Shutdown\n󰜉 Reboot\n󰈆 Logout"
+
+# Run rofi and capture the user's choice
+chosen=$(echo -e "$options" | rofi -dmenu -i -p "Power Menu:" -theme-str 'window {width: 15em;} listview {lines: 3;}')
+
+case "$chosen" in
+    *Shutdown)
+        systemctl poweroff
+        ;;
+    *Reboot)
+        systemctl reboot
+        ;;
+    *Logout)
+        i3-msg exit
+        ;;
+esac
