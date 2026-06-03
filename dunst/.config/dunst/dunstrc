@@ -1,0 +1,100 @@
+# See dunst(5) for all configuration options
+
+[global]
+    ### Display & Geometry ###
+    monitor = 0
+    follow = none
+
+    # Kompakte Abmessungen
+    width = 280
+    height = (0, 200)
+    origin = top-right
+    offset = (20, 20)
+    scale = 0
+    notification_limit = 3
+
+    ### Progress bar ###
+    progress_bar = true
+    progress_bar_height = 4
+    progress_bar_frame_width = 0
+    progress_bar_min_width = 100
+    progress_bar_max_width = 280
+    progress_bar_corner_radius = 0
+
+    ### Window Styling (Flat & Minimal) ###
+    transparency = 0
+    padding = 10
+    horizontal_padding = 12
+    text_icon_padding = 10
+
+    # Hauchdünner, unauffälliger Rahmen
+    frame_width = 1
+    frame_color = "#333333"
+
+    # Keine Lücken zwischen gestapelten Notification-Blöcken (nahtlos)
+    gap_size = 0
+    separator_height = 1
+    separator_color = frame
+
+    # Harte Kanten aktivieren
+    corner_radius = 0
+    corners = all
+    icon_corner_radius = 0
+
+    ### Text Configuration ###
+    font = BlexMono Nerd Font 11
+    line_height = 2
+    markup = full
+    format = "<span font_desc='BlexMono Nerd Font Bold 9' foreground='#ffffff'>%s</span>\n%b"
+    alignment = left
+    vertical_alignment = center
+    show_age_threshold = 60
+    ellipsize = end
+    ignore_newline = no
+    stack_duplicates = true
+    hide_duplicate_count = true
+    show_indicators = no
+
+    ### Icons ###
+    enable_recursive_icon_lookup = true
+    icon_theme = Papirus
+    icon_position = left
+    min_icon_size = 24
+    max_icon_size = 32
+
+    ### History & System ###
+    sticky_history = yes
+    history_length = 15
+    dmenu = /usr/bin/dmenu -p dunst:
+    browser = /usr/bin/xdg-open
+    always_run_script = true
+    title = Dunst
+    class = Dunst
+    ignore_dbusclose = false
+
+    ### Mouse Actions ###
+    mouse_left_click = close_current, remove_current
+    mouse_middle_click = do_action, close_current
+    mouse_right_click = close_all
+
+[urgency_low]
+    background = "#141414"
+    foreground = "#aaaaaa"
+    frame_color = "#2a2a2a"
+    timeout = 4
+    default_icon = dialog-information
+
+[urgency_normal]
+    background = "#141414"
+    foreground = "#eeeeee"
+    frame_color = "#333333"
+    timeout = 6
+    default_icon = dialog-information
+
+[urgency_critical]
+    background = "#141414"
+    foreground = "#eeeeee"
+    frame_color = "#900000" # Nur bei kritischen Fehlern ein dezentes Dunkelrot
+    timeout = 0
+    default_icon = dialog-warning
+

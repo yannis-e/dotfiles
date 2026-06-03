@@ -8,7 +8,14 @@ set $mod Mod4
 # Aesthetics & Typography
 font pango:BlexMono Nerd Font 10
 floating_modifier $mod
-tiling_drag modifier titlebar
+tiling_drag enable
+
+# ==============================================================================
+# Keyboard Layout Configuration (US Layout)
+# ==============================================================================
+input * {
+    xkb_layout "de"
+}
 
 # ==============================================================================
 # Autostart Services

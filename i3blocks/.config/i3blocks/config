@@ -12,13 +12,26 @@ separator_block_width=15
 markup=pango
 
 [network]
-command=~/.local/bin/i3blocks-network
+command=~/.config/i3blocks/network.sh
 interval=5
+
+[volume]
+command=~/.config/i3blocks/volume.sh
+interval=once
+signal=10
+
+[bluethooth]
+command=~/.config/i3blocks/bluethooth.sh
+interval=5
+
+[battery]
+command=~/.config/i3blocks/battery.sh
+interval=10
 
 [time]
 label= 
 command=date '+%Y-%m-%d %H:%M'
-interval=1
+interval=10
 color=#f1fa8c
 
 [power]
