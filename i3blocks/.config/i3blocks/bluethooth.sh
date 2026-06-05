@@ -1,12 +1,30 @@
 #!/usr/bin/env bash
 
-# 1. Handle the click event to open bluetui in floating mode
+# 1. Handle click events (Zuerst ausführen!)
 if [ "${BLOCK_BUTTON:-0}" -eq 1 ]; then
-    kitty --class "floating-window" bluetui
+    # Links-Klick: Öffne bluetui im Hintergrund
+    foot -a "floating-window" --title="floating-window" -e bluetui &
+elif [ "${BLOCK_BUTTON:-0}" -eq 3 ]; then
+    # Aktuellen Status NUR beim Klick prüfen
+    CURRENT_POWER=$(bluetoothctl show | awk '/Powered:/ {print $2}')
+
+    if [[ "$CURRENT_POWER" == "yes" ]]; then
+        bluetoothctl power off >/dev/null 2>&1
+        # Zeige SOFORT "Off" an, ohne auf die Hardware zu warten
+        echo "<span color='#ff5555'>󰂲 Off</span>"
+    else
+        bluetoothctl power on >/dev/null 2>&1
+        # Zeige SOFORT "Idle" an, während die Hardware hochfährt
+        echo "<span color='#f1fa8c'>󰂯 Idle</span>"
+    fi
+
+    # Im Hintergrund verzögert die Bar updaten, falls Geräte sich direkt verbinden
+    (sleep 1.5 && pkill -SIGRTMIN+11 i3blocks) &
+    exit 0
 fi
 
-# 2. Check if Bluetooth controller/hardware is powered on
-POWER_STATUS=$(bluetoothctl show | grep "Powered:" | awk '{print $2}')
+# 2. Regulärer Check für das i3blocks-Intervall
+POWER_STATUS=$(bluetoothctl show | awk '/Powered:/ {print $2}')
 
 # 3. Output logic
 if [[ "$POWER_STATUS" == "yes" ]]; then
@@ -19,21 +37,21 @@ if [[ "$POWER_STATUS" == "yes" ]]; then
         FIRST_MAC="${CONNECTED_MACS[0]}"
 
         # Name des ersten Geräts auslesen
-        FIRST_NAME=$(bluetoothctl info "$FIRST_MAC" | grep "Name:" | sed 's/^.*Name:[[:space:]]*//')
+        FIRST_NAME=$(bluetoothctl info "$FIRST_MAC" | awk -F': ' '/Name:/ {print $2}' | head -n1)
+        [ -z "$FIRST_NAME" ] && FIRST_NAME="Unknown"
 
         # Name kürzen, falls er zu lang ist
         [[ ${#FIRST_NAME} -gt 16 ]] && FIRST_NAME="${FIRST_NAME:0:16}.."
 
         # Prüfen, ob noch weitere Geräte verbunden sind
         if [ "$TOTAL_DEVICES" -gt 1 ]; then
-            # Berechne wie viele Geräte noch übrig sind
             REMAINING_COUNT=$((TOTAL_DEVICES - 1))
             OUTPUT_TEXT="$FIRST_NAME (+${REMAINING_COUNT})"
         else
             OUTPUT_TEXT="$FIRST_NAME"
         fi
 
-        # Ausgabe (z.B. 󰂱 Sony WH-10.. (+2) oder einfach 󰂱 Sony WH-10..)
+        # Ausgabe bei aktiver Verbindung
         echo "<span color='#8be9fd'>󰂱 $OUTPUT_TEXT</span>"
     else
         # Bluetooth ist an, aber kein Gerät ist verbunden

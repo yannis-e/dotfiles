@@ -11,9 +11,10 @@ separator=true
 separator_block_width=15
 markup=pango
 
-[network]
-command=~/.config/i3blocks/network.sh
-interval=5
+[mediaplayer]
+command=~/.config/i3blocks/mediaplayer.sh
+interval=2
+color=#1DB954
 
 [volume]
 command=~/.config/i3blocks/volume.sh
@@ -23,6 +24,12 @@ signal=10
 [bluethooth]
 command=~/.config/i3blocks/bluethooth.sh
 interval=5
+signal=11
+
+[network]
+command=~/.config/i3blocks/network.sh
+interval=5
+signal=12
 
 [battery]
 command=~/.config/i3blocks/battery.sh
@@ -33,9 +40,3 @@ label=
 command=date '+%Y-%m-%d %H:%M'
 interval=10
 color=#f1fa8c
-
-[power]
-full_text=󰐥 
-color=#ff5555
-command=~/.local/bin/rofi-power-menu
-BLOCK_BUTTON=1

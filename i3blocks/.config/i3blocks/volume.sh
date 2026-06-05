@@ -1,13 +1,19 @@
 #!/usr/bin/env bash
 
-# 1. Handle the click event to open wiremix in floating mode
-# (Change '1' to '3' if you want it to trigger on Right-click instead of Left-click)
-if [ "${BLOCK_BUTTON:-0}" -eq 1 ]; then
-    kitty --class "floating-window" wiremix
+# 1. Handle mouse click and scroll events
+case "${BLOCK_BUTTON:-0}" in
+    1) foot -a "floating-window" --title="floating-window" -e wiremix & ;; # Links-Klick: Mixer (im Hintergrund)
+    3) wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle ;;                       # Rechts-Klick: Mute toggle
+    4) wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+ ;;                        # Scroll hoch: +5%
+    5) wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%- ;;                        # Scroll runter: -5%
+esac
+
+# Wenn gescrollt oder geklickt wurde, i3blocks sofort anweisen sich neu zu zeichnen (Signal 10)
+if [ "${BLOCK_BUTTON:-0}" -gt 0 ]; then
+    pkill -SIGRTMIN+10 i3blocks
 fi
 
 # 2. Get volume data from PipeWire (via wpctl)
-# This extracts the default audio output source data
 VOLUME_DATA=$(wpctl get-volume @DEFAULT_AUDIO_SINK@)
 
 # Check if the output is muted
@@ -18,8 +24,8 @@ if [[ -n "$IS_MUTED" ]]; then
     echo "<span color='#ff5555'>󰝟 Muted</span>"
 else
     # 4. Clean up the volume percentage integer
-    # wpctl outputs volume as a decimal (e.g., "Volume: 0.55"), so we convert it to 55%
-    VOLUME_NUM=$(echo "$VOLUME_DATA" | awk '{print $2 * 100}' | cut -d. -f1)
+    # awk nutzt printf, um Rundungsfehler bei Floats (z.B. 0.55 * 100 = 55.00001) sauber zu blocken
+    VOLUME_NUM=$(echo "$VOLUME_DATA" | awk '{printf "%.0f", $2 * 100}')
 
     # 5. Dynamically pick the right icon depending on volume level
     if [ "$VOLUME_NUM" -eq 0 ]; then

@@ -1,6 +1,0 @@
-[config]
-save_dir=$HOME/pictures/screenshots
-save_filename_format=screenshot_%Y%m%d_%H%M%S.png
-show_panel=true
-line_size=4
-text_size=20
