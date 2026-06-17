@@ -3,7 +3,7 @@
 # 1. Handle click events (Zuerst ausführen!)
 if [ "${BLOCK_BUTTON:-0}" -eq 1 ]; then
     # Links-Klick: Öffne bluetui im Hintergrund
-    foot -a "floating-window" --title="floating-window" -e bluetui &
+    alacritty --class "floating-window" --title "Bluetooth" -e bluetui &
 elif [ "${BLOCK_BUTTON:-0}" -eq 3 ]; then
     # Aktuellen Status NUR beim Klick prüfen
     CURRENT_POWER=$(bluetoothctl show | awk '/Powered:/ {print $2}')

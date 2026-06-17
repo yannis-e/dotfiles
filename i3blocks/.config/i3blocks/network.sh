@@ -3,7 +3,7 @@
 # 1. Handle click events (Zuerst ausführen!)
 if [ "${BLOCK_BUTTON:-0}" -eq 1 ]; then
     # Links-Klick: Öffne impala im Hintergrund
-    foot -a "floating-window" --title="floating-window" -e impala &
+    alacritty --class "floating-window" --title "Network" -e impala &
 elif [ "${BLOCK_BUTTON:-0}" -eq 3 ]; then
     # Rechts-Klick: Prüfen, ob WLAN per rfkill blockiert ist
     # (0 bedeutet unblockiert, 1 bedeutet blockiert/aus)

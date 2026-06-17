@@ -2,7 +2,7 @@
 
 # 1. Handle mouse click and scroll events
 case "${BLOCK_BUTTON:-0}" in
-    1) foot -a "floating-window" --title="floating-window" -e wiremix & ;; # Links-Klick: Mixer (im Hintergrund)
+    1) alacritty --class "floating-window" --title "Audio" -e wiremix & ;; # Links-Klick: Mixer (im Hintergrund)
     3) wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle ;;                       # Rechts-Klick: Mute toggle
     4) wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+ ;;                        # Scroll hoch: +5%
     5) wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%- ;;                        # Scroll runter: -5%
