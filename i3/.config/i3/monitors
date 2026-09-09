@@ -1,0 +1,22 @@
+# Set output variables
+set $main_display eDP-1-0
+set $ext_display HDMI-0
+
+# Configure xrandr arrangement on startup (Top layout)
+exec_always --no-startup-id xrandr --output $ext_display --mode 1920x1080 --rate 60.00 --above $main_display --auto
+
+# Workspace output assignments (Primary output -> Fallback output)
+# When $ext_display is unplugged, workspaces 1-5 automatically fall back to $main_display
+workspace 1 output $ext_display $main_display
+workspace 2 output $ext_display $main_display
+workspace 3 output $ext_display $main_display
+workspace 4 output $ext_display $main_display
+
+
+# Workspaces default to internal screen
+workspace 5 output $main_display
+workspace 6 output $main_display
+workspace 7 output $main_display
+workspace 8 output $main_display
+workspace 9 output $main_display
+workspace 10 output $main_display

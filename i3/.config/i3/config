@@ -2,9 +2,16 @@
 # i3 Window Manager Configuration
 # ==============================================================================
 
+# --- Gruvbox Color Palette ---
+set $bg           #282828
+set $bg_dim       #1d2021
+set $fg           #ebdbb2
+set $fg_dim       #a89984
+set $orange       #fe8019
+set $red          #fb4934
+
 # --- Modular Config Imports ---
-# Hinweis: Stelle sicher, dass die importierten Dateien i3-kompatibel sind!
-#include ./monitors
+include ./monitors
 include ./exec
 include ./visuals
 
@@ -17,23 +24,25 @@ set $down j
 set $up k
 set $right l
 
-# Preferred Applications (Für X11 angepasst)
+# Preferred Applications
 set $term alacritty
-set $menu rofi -show drun
+set $menu dmenu_run
 
-# Utility Commands (Screenshots mit maim für X11 statt grim/slurp)
+# Utility Commands
 set $scsh maim -s | xclip -selection clipboard -t image/png
 set $fullscsh maim | xclip -selection clipboard -t image/png
 
+# --- Global Settings ---
+focus_follows_mouse yes
+force_focus_wrapping no
+
 # --- Window Rules ---
-# Unter X11 nutzt man 'class' statt 'app_id'
 for_window [class="floating-window"] floating enable
+for_window [title="Volume Control"] floating enable, resize set 800 500, move position center
+for_window [class="feh"] floating enable
 
 # --- Fonts ---
 font pango:BlexMono Nerd Font 10
-
-# Hinweis: Die Wayland 'input' Blöcke wurden entfernt.
-# Nutze 'setxkbmap de' in deiner .xprofile für das deutsche Layout.
 
 # ==============================================================================
 # KEY BINDINGS
@@ -44,7 +53,7 @@ bindsym $mod+Return exec $term
 bindsym $mod+Shift+q kill
 bindsym $mod+d exec $menu
 bindsym $mod+Shift+r reload
-bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You exited i3. Do you really want to exit?' -B 'Yes, exit i3' 'i3-msg exit'"
+bindsym $mod+Shift+e exec --no-startup-id ~/.config/scripts/i3-powermenu.sh
 floating_modifier $mod
 
 # --- Navigation (Focus) ---
@@ -53,11 +62,16 @@ bindsym $mod+$down focus down
 bindsym $mod+$up focus up
 bindsym $mod+$right focus right
 
+# Focus Parent/Child
+bindsym $mod+a focus parent
+bindsym $mod+Shift+a focus child
+
 # --- Window Movement ---
 bindsym $mod+Shift+$left move left
 bindsym $mod+Shift+$down move down
 bindsym $mod+Shift+$up move up
 bindsym $mod+Shift+$right move right
+bindsym $mod+p exec --no-startup-id autorandr --cycle
 
 # --- Workspaces ---
 bindsym $mod+1 workspace number 1
@@ -83,6 +97,10 @@ bindsym $mod+Shift+8 move container to workspace number 8
 bindsym $mod+Shift+9 move container to workspace number 9
 bindsym $mod+Shift+0 move container to workspace number 10
 
+# --- Scratchpad (Quick Dropdown Window) ---
+bindsym $mod+Shift+minus move scratchpad
+bindsym $mod+minus scratchpad show
+
 # --- Layout Management ---
 bindsym $mod+b splith
 bindsym $mod+v splitv
@@ -91,21 +109,44 @@ bindsym $mod+w layout tabbed
 bindsym $mod+e layout toggle split
 bindsym $mod+f fullscreen
 bindsym $mod+space floating toggle
+bindsym $mod+Shift+space focus mode_toggle
 
 # --- Hardware & Media Utilities ---
 # Volume Control (Native PipeWire) + Instant Bar Update
-bindsym XF86AudioMute exec wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle && pkill -RTMIN+10 i3blocks
-bindsym XF86AudioLowerVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%- && pkill -RTMIN+10 i3blocks
-bindsym XF86AudioRaiseVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+ --limit 1.0 && pkill -RTMIN+10 i3blocks
-bindsym XF86AudioMicMute exec wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle && pkill -RTMIN+10 i3blocks
+bindsym XF86AudioMute exec --no-startup-id wpctl set-mute @DEFAULT_SINK@ toggle && pkill -RTMIN+10 i3blocks
+bindsym XF86AudioLowerVolume exec --no-startup-id wpctl set-volume @DEFAULT_SINK@ 5%- && pkill -RTMIN+10 i3blocks
+bindsym XF86AudioRaiseVolume exec --no-startup-id wpctl set-volume @DEFAULT_SINK@ 5%+ --limit 1.0 && pkill -RTMIN+10 i3blocks
+bindsym XF86AudioMicMute exec --no-startup-id wpctl set-mute @DEFAULT_SOURCE@ toggle && pkill -RTMIN+10 i3blocks
 
-# Display Brightness
-bindsym XF86MonBrightnessDown exec brightnessctl set 5%-
-bindsym XF86MonBrightnessUp exec brightnessctl set 5%+
+# Media Playback Controls
+bindsym XF86AudioPlay exec playerctl play-pause
+bindsym XF86AudioNext exec playerctl next
+bindsym XF86AudioPrev exec playerctl previous
 
-# Screenshots
+# Display Brightness (using brightnessctl)
+bindsym XF86MonBrightnessDown exec brightnessctl set 5%- && pkill -RTMIN+11 i3blocks
+bindsym XF86MonBrightnessUp exec brightnessctl set 5%+ && pkill -RTMIN+11 i3blocks
+
+# Screenshots (using maim & xclip)
 bindsym Print exec $scsh
 bindsym Shift+Print exec $fullscsh
+bindsym $mod+Print exec maim -i $(xdotool getactivewindow) | xclip -selection clipboard -t image/png
+
+# Quick App Launchers
+bindsym $mod+Control+p exec $term -t wiremix -e wiremix
+
+# --- Resize Mode ---
+mode "resize" {
+    bindsym $left resize shrink width 10 px or 10 ppt
+    bindsym $down resize grow height 10 px or 10 ppt
+    bindsym $up resize shrink height 10 px or 10 ppt
+    bindsym $right resize grow width 10 px or 10 ppt
+
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+    bindsym $mod+r mode "default"
+}
+bindsym $mod+r mode "resize"
 
 # --- Status Bar ---
 bar {
@@ -113,6 +154,13 @@ bar {
     position top
     colors {
         background #000000
-        statusline #aaaaaa
+        statusline #ebdbb2
+        separator  #a89984
+
+        #                  border   bg       text
+        focused_workspace  $orange  $orange  #282828
+        active_workspace   $bg_dim  $bg_dim  $fg
+        inactive_workspace $bg_dim  $bg_dim  $fg_dim
+        urgent_workspace   $red     $red     $fg
     }
 }

@@ -1,1 +1,13 @@
-exec --no-startup-id feh --bg-fill --randomize ~/.config/sway/walls/*
+# ==============================================================================
+# i3 Visuals & Aesthetics Configuration (Gruvbox Theme)
+# ==============================================================================
+
+# --- Wallpaper ---
+exec --no-startup-id feh --bg-fill --randomize ~/.config/i3/walls/*
+
+# Window Colors
+#                       border    bg        text     indicator child_border
+client.focused          $orange   $bg       $fg      $orange   $orange
+client.focused_inactive $bg_dim   $bg_dim   $fg_dim  $bg_dim   $bg_dim
+client.unfocused        $bg_dim   $bg_dim   $fg_dim  $bg_dim   $bg_dim
+client.urgent           $red      $red      $fg      $red      $red
