@@ -9,15 +9,11 @@
 
 (setq org-directory "~/notes/org/")
 
-;;; Spell Checking
+;;; German and English spell checking
 
-(after! spell-fu
-  (setq ispell-program-name "aspell"
-        ispell-extra-args '("--sug-mode=ultra"))
+(after! ispell
+  (setq ispell-program-name "hunspell"
+        ispell-dictionary "de_DE,en_US")
 
-  ;; Add both dictionaries
-  (spell-fu-dictionary-add "en")
-  (spell-fu-dictionary-add "de"))
-
-;; Enable spell checking in Org files
-(add-hook 'org-mode-hook #'spell-fu-mode)
+  (ispell-set-spellchecker-params)
+  (ispell-hunspell-add-multi-dic "de_DE,en_US"))
