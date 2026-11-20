@@ -9,26 +9,15 @@
 
 (setq org-directory "~/notes/org/")
 
-;;; Morning journal
+;;; Spell Checking
 
-(setq my/journal-directory "~/notes/org/journal/")
+(after! spell-fu
+  (setq ispell-program-name "aspell"
+        ispell-extra-args '("--sug-mode=ultra"))
 
-(defun my/open-morning-journal ()
-  "Open today's morning journal."
-  (interactive)
-  (let ((file (expand-file-name
-               (format-time-string "%Y-%m-%d.org")
-               my/journal-directory)))
-    (make-directory my/journal-directory t)
-    (find-file file)
-    (goto-char (point-max))
-    (unless (re-search-forward "^\\* Morning$" nil t)
-      (goto-char (point-max))
-      (insert
-       (format
-        "#+title: Morning Journal — %s\n\n* Morning\n\n"
-        (format-time-string "%Y-%m-%d"))))
-    (goto-char (point-max))))
+  ;; Add both dictionaries
+  (spell-fu-dictionary-add "en")
+  (spell-fu-dictionary-add "de"))
 
-(map! :leader
-      "n j" #'my/open-morning-journal)
+;; Enable spell checking in Org files
+(add-hook 'org-mode-hook #'spell-fu-mode)
